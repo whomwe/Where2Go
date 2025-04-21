@@ -1,0 +1,3 @@
+C:/Users/black/HTTPSServer/build/CMakeFiles/HTTPSServer.dir
+C:/Users/black/HTTPSServer/build/CMakeFiles/edit_cache.dir
+C:/Users/black/HTTPSServer/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,105 @@
+#include "HTTPSServer.h"
+#include "HTTPSServer.cpp"
+
+using namespace std;
+
+int main()
+{
+	//step 1initialise WSA by invoking the DLL's 
+	SOCKET serverSocket, acceptSocket;
+	int port = 27015;
+	WSADATA wsaData;
+	WORD wVersionRequested = MAKEWORD(2, 2);
+	int wsaerr = WSAStartup(wVersionRequested, &wsaData);
+	if (wsaerr != 0) {
+		cout << "Winsock dll not found" << endl;
+		return 0;
+	}
+	else {
+		cout << "Winsock dll found!" << endl;
+		cout << "status: " << wsaData.szSystemStatus << endl;
+	}
+
+	//step 2 - create the server socket AND CLIENT SOCKET 
+	//serverSocket = INVALID_SOCKET;
+	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (serverSocket == INVALID_SOCKET) {
+		cout << "Error at socket(): " << WSAGetLastError() << endl;
+		WSACleanup();
+		return 0;
+	}
+	else {
+		cout << "socket() is OK!" << endl;
+	}
+
+	// Create the clientSocket
+	SOCKET clientSocket = INVALID_SOCKET;
+	clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (clientSocket == INVALID_SOCKET) {
+		cout << "Error at clientSocket(): " << WSAGetLastError() << endl;
+		WSACleanup();
+		return 0;
+	}
+	else {
+		cout << "clientSocket() is OK!" << endl;
+	}
+
+	//step 3 - bind the socket to the relevant IP and Port number (using the bind function. it takes 3 parameters: the socket, the address of a socket variable, and the socket length.)
+	sockaddr_in service;
+	//AF_INET for family used as its TCP connection
+	service.sin_family = AF_INET;
+	InetPton(AF_INET,"127.0.0.1", &service.sin_addr.s_addr);		
+	service.sin_port = htons(port);
+
+	//error handling for port binding 
+	if (bind(serverSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR) {
+		cout << "bind() failed: " << WSAGetLastError() << endl;
+		closesocket(serverSocket);
+		WSACleanup();
+		return 0;
+	}
+	else {
+		cout << "bind() is okay" << endl;
+	}
+	
+	//step 4a - listen out for connections 
+	if (listen(serverSocket, 1) == SOCKET_ERROR){
+		cout << "listen(): Error listening on socket" << WSAGetLastError() << endl;
+		return 0;
+	}
+	else {
+		cout << "listen() OK, awaiting connections... " << endl;
+	}
+	//CLIENT SOCKET CONFIGURATION
+
+		//connect to the server socket
+	sockaddr_in clientService;
+	clientService.sin_family = AF_INET;
+	InetPton(AF_INET, "127.0.0.1", &clientService.sin_addr.s_addr);
+	clientService.sin_port = htons(port);
+	if (connect(clientSocket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR) {
+		cout << "Client: connect() - failed to connect" << endl;
+		WSACleanup();
+		return 0;
+	}
+	else {
+		cout << "Client: Connect() is OK, you may now send & recieve data" << endl;
+	}
+	system("pause");
+
+	//step 4b - accept connections that come in : pauses execution until client establishes connection with socket, which we then accept and move on 
+	acceptSocket = accept(serverSocket, NULL, NULL);
+	if (acceptSocket == INVALID_SOCKET) {
+		cout << "accept() failed: " << WSAGetLastError() << endl; 
+		WSACleanup();
+		return -1;
+	}
+		cout << "connection accepted" << endl;
+
+		// Clean up (AFTER accept runs)
+		closesocket(acceptSocket);
+		closesocket(serverSocket);
+		WSACleanup();
+		return 0;
+		
+}

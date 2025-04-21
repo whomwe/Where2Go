@@ -1,0 +1,4 @@
+# ninja log v5
+9	1818	7648920450055254	CMakeFiles/HTTPSServer.dir/src/HTTPSServer.cpp.obj	904377285669e18e
+27	1865	7648920450511544	CMakeFiles/HTTPSServer.dir/src/main.cpp.obj	f1afba0fa761e44c
+1866	3470	7648920453592887	HTTPSServer.exe	1d48404d4be89938
