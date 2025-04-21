@@ -96,23 +96,43 @@ int main()
 	}
 		cout << "connection accepted" << endl;
 
-		// Clean up (AFTER accept runs)
-		closesocket(acceptSocket);
-		closesocket(serverSocket);
-		WSACleanup();
-		return 0;
+	//SEND AND RECIEVE SERVER
 		
 
 		//SENDING DATA VIA TCP 
 		char buffer[200];
 
-		cout << "enter the message you would like: ";
+		cout << "enter the message you would like to send to the server: ";
+		cin.getline(buffer, 200);
 
-		cin.getline();
+		int bytecount = send(serverSocket, buffer, 200, 0);
 
-		send(serverSocket, buffer, 200, 0);
+		if (bytecount > 0) {
+			cout << "message sent" << buffer << endl;
+
+		}
+		else {
+			WSACleanup();
+		}
+
+		//chat to the client, RECIEVE DATA
+		
+
+		int bytecount2 = recv(acceptSocket, buffer, 200, 0);
+
+		if (bytecount2 > 0) {
+			cout << "message recieved! you said: " << buffer << endl;
+		}
+		else {
+			WSACleanup();
+		}
 
 
+		// Clean up (AFTER accept runs)
+		closesocket(acceptSocket);
+		closesocket(serverSocket);
+		WSACleanup();
+		return 0;
 
 
 }
