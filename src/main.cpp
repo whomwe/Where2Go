@@ -102,4 +102,17 @@ int main()
 		WSACleanup();
 		return 0;
 		
+
+		//SENDING DATA VIA TCP 
+		char buffer[200];
+
+		cout << "enter the message you would like: ";
+
+		cin.getline();
+
+		send(serverSocket, buffer, 200, 0);
+
+
+
+
 }
