@@ -103,26 +103,29 @@ int main()
 	char buffer[200];
 
 	while (true) {
-	cout << "enter the message you would like to send to the server (to exit, type 'exit') : ";
-	cin.getline(buffer, 200);
+		cout << "enter the message you would like to send to the server (to exit, type 'exit') : ";
+		cin.getline(buffer, 200);
 
-	int bytecount = send(clientSocket, buffer, 200, 0);
+		//go to accept when exit is typed
+		if (strcmp(buffer, "exit") == 0) break;
 
-	if (bytecount > 0) {
-		cout << "message sent: " << buffer << endl;
+		int bytecount = send(clientSocket, buffer, 200, 0);
 
-	}
-	else {
-		WSACleanup();
-	}
+		if (bytecount > 0) {
+			cout << "message sent: " << buffer << endl;
 
-	//chat to the client, RECIEVE DATA
-	}
+		}
+		else {
+			WSACleanup();
+		}
 
-	//clear buffer to recieve new message synchoronusly and send & recieve mulitple times
-	ZeroMemory(buffer, 200);
+		//chat to the client, RECIEVE DATA
 
-	int bytecount2 = recv(acceptSocket, buffer, 200, 0);
+
+		//clear buffer to recieve new message synchoronusly and send & recieve mulitple times
+		ZeroMemory(buffer, 200);
+
+		int bytecount2 = recv(acceptSocket, buffer, 200, 0);
 
 		if (bytecount2 > 0) {
 			cout << "message recieved! you said: " << buffer << endl;
@@ -130,7 +133,7 @@ int main()
 		else {
 			WSACleanup();
 		}
-
+	}
 
 	// Clean up (AFTER accept runs) if message is "shutdown"
 		if (buffer == "shutdown") {
