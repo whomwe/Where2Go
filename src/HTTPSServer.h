@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <string>
-#include <stdio.h>#fojafd
+#include <stdio.h>
 
 
 // TODO: Reference additional headers your program requires here.
