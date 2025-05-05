@@ -48,7 +48,7 @@ int main()
 	sockaddr_in service;
 	//AF_INET for family used as its TCP connection
 	service.sin_family = AF_INET;
-	InetPton(AF_INET,"127.0.0.1", &service.sin_addr.s_addr);		
+	InetPton(AF_INET, "127.0.0.1", &service.sin_addr.s_addr);
 	service.sin_port = htons(port);
 
 	//error handling for port binding 
@@ -61,9 +61,9 @@ int main()
 	else {
 		cout << "bind() is okay" << endl;
 	}
-	
+
 	//step 4a - listen out for connections 
-	if (listen(serverSocket, 1) == SOCKET_ERROR){
+	if (listen(serverSocket, 1) == SOCKET_ERROR) {
 		cout << "listen(): Error listening on socket" << WSAGetLastError() << endl;
 		return 0;
 	}
@@ -90,33 +90,37 @@ int main()
 	//step 4b - accept connections that come in : pauses execution until client establishes connection with socket, which we then accept and move on 
 	acceptSocket = accept(serverSocket, NULL, NULL);
 	if (acceptSocket == INVALID_SOCKET) {
-		cout << "accept() failed: " << WSAGetLastError() << endl; 
+		cout << "accept() failed: " << WSAGetLastError() << endl;
 		WSACleanup();
 		return -1;
 	}
-		cout << "connection accepted" << endl;
+	cout << "connection accepted" << endl;
 
 	//SEND AND RECIEVE SERVER
-		
+
 
 	//SENDING DATA VIA TCP 
 	char buffer[200];
 
-	cout << "enter the message you would like to send to the server: ";
+	while (true) {
+	cout << "enter the message you would like to send to the server (to exit, type 'exit') : ";
 	cin.getline(buffer, 200);
 
 	int bytecount = send(clientSocket, buffer, 200, 0);
 
-		if (bytecount > 0) {
-			cout << "message sent" << buffer << endl;
+	if (bytecount > 0) {
+		cout << "message sent: " << buffer << endl;
 
-		}
-		else {
-			WSACleanup();
-		}
+	}
+	else {
+		WSACleanup();
+	}
 
-		//chat to the client, RECIEVE DATA
-		
+	//chat to the client, RECIEVE DATA
+	}
+
+	//clear buffer to recieve new message synchoronusly and send & recieve mulitple times
+	ZeroMemory(buffer, 200);
 
 	int bytecount2 = recv(acceptSocket, buffer, 200, 0);
 
@@ -128,12 +132,13 @@ int main()
 		}
 
 
-		// Clean up (AFTER accept runs)
-	closesocket(clientSocket);
-	closesocket(acceptSocket);
-	closesocket(serverSocket);
-	WSACleanup();
-	return 0;
-
+	// Clean up (AFTER accept runs) if message is "shutdown"
+		if (buffer == "shutdown") {
+			closesocket(clientSocket);
+			closesocket(acceptSocket);
+			closesocket(serverSocket);
+			WSACleanup();
+			return 0;
+		}
 
 }
