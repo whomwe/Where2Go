@@ -99,13 +99,13 @@ int main()
 	//SEND AND RECIEVE SERVER
 		
 
-		//SENDING DATA VIA TCP 
-		char buffer[200];
+	//SENDING DATA VIA TCP 
+	char buffer[200];
 
-		cout << "enter the message you would like to send to the server: ";
-		cin.getline(buffer, 200);
+	cout << "enter the message you would like to send to the server: ";
+	cin.getline(buffer, 200);
 
-		int bytecount = send(serverSocket, buffer, 200, 0);
+	int bytecount = send(clientSocket, buffer, 200, 0);
 
 		if (bytecount > 0) {
 			cout << "message sent" << buffer << endl;
@@ -118,7 +118,7 @@ int main()
 		//chat to the client, RECIEVE DATA
 		
 
-		int bytecount2 = recv(acceptSocket, buffer, 200, 0);
+	int bytecount2 = recv(acceptSocket, buffer, 200, 0);
 
 		if (bytecount2 > 0) {
 			cout << "message recieved! you said: " << buffer << endl;
@@ -129,10 +129,11 @@ int main()
 
 
 		// Clean up (AFTER accept runs)
-		closesocket(acceptSocket);
-		closesocket(serverSocket);
-		WSACleanup();
-		return 0;
+	closesocket(clientSocket);
+	closesocket(acceptSocket);
+	closesocket(serverSocket);
+	WSACleanup();
+	return 0;
 
 
 }
