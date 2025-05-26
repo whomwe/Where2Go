@@ -6,7 +6,11 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
+#include <thread>
 
+//OpenSSL libraries
+#include <openssl/err.h>
+#include <openssl/ssl.h>
 
 // TODO: Reference additional headers your program requires here.
 #define _WINSOCK_DEPRECATED_NO_WARNINGS

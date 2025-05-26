@@ -3,6 +3,24 @@
 
 using namespace std;
 
+//initialise SSL security layer as "handleClient"
+void handleClient(SSL* ssl) {
+	char buffer[200];
+
+	while (true) {
+		ZeroMemory(buffer, sizeof(buffer));
+		int bytesReceived = SSL_read(ssl, buffer, sizeof(buffer));
+		if (bytesReceived <= 0) break;
+
+		cout << "[Thread] Client says: " << buffer << endl;
+		SSL_write(ssl, buffer, strlen(buffer));
+	}
+
+	SSL_shutdown(ssl);
+	SSL_free(ssl);
+	cout << "[Thread] Client disconnected." << endl;
+}
+
 int main()
 {
 	//step 1initialise WSA by invoking the DLL's 
@@ -60,7 +78,7 @@ int main()
 	}
 	else {
 		cout << "bind() is okay" << endl;
-	}
+	}	
 
 	//step 4a - listen out for connections 
 	if (listen(serverSocket, 1) == SOCKET_ERROR) {
@@ -68,11 +86,30 @@ int main()
 		return 0;
 	}
 	else {
-		cout << "listen() OK, awaiting connections... " << endl;
+		cout << "listen() OK, awaiting connections for port "<< port << "... " << endl;
+	}
+
+
+	//Initialise OpenSSL
+	SSL_library_init();
+	OpenSSL_add_all_algorithms();
+	SSL_load_error_strings();
+	const SSL_METHOD* method = TLS_server_method();
+	SSL_CTX* ctx = SSL_CTX_new(method);
+
+	if (!ctx) {
+		ERR_print_errors_fp(stderr);
+		return 1;
+	}
+
+	if (SSL_CTX_use_certificate_file(ctx, "certs/server.crt", SSL_FILETYPE_PEM) <= 0 ||
+		SSL_CTX_use_PrivateKey_file(ctx, "certs/server.key", SSL_FILETYPE_PEM) <= 0) {
+		ERR_print_errors_fp(stderr);
+		return 1;
 	}
 	//CLIENT SOCKET CONFIGURATION
 
-		//connect to the server socket
+	//connect to the server socket
 	sockaddr_in clientService;
 	clientService.sin_family = AF_INET;
 	InetPton(AF_INET, "127.0.0.1", &clientService.sin_addr.s_addr);
@@ -96,6 +133,18 @@ int main()
 	}
 	cout << "connection accepted" << endl;
 
+	//step 4c - Wrap the accepted socket in secure stream
+	cout << "connection accepted" << endl;
+	SSL* ssl = SSL_new(ctx);
+	SSL_set_fd(ssl, acceptSocket);
+
+	if (SSL_accept(ssl) <= 0) {
+		ERR_print_errors_fp(stderr);
+	}
+	else {
+		SSL_write(ssl, "Hello over HTTPS!", 18);
+
+	}
 	//SEND AND RECIEVE SERVER
 
 
@@ -119,10 +168,7 @@ int main()
 			WSACleanup();
 		}
 
-		//chat to the client, RECIEVE DATA
-
-
-		//clear buffer to recieve new message synchoronusly and send & recieve mulitple times
+ 		//chat to the client, recieve data and clear buffer to recieve new message synchoronusly and send & recieve mulitple times
 		ZeroMemory(buffer, 200);
 
 		int bytecount2 = recv(acceptSocket, buffer, 200, 0);
