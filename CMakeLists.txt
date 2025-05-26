@@ -20,7 +20,7 @@ set(OPENSSL_ROOT_DIR "C:/Users/black/vcpkg/installed/x64-windows")
 find_package(OpenSSL REQUIRED)
 
 #Add sources
-set(SOURCES "src/HTTPSServer.cpp" "src/HTTPSServer.h" "src/main.cpp")
+set(SOURCES "src/HTTPSServer.cpp" "src/HTTPSServer.h" "src/HTTPSClient.cpp" "src/main.cpp")
 
 # Add source to this project's executable.
 add_executable (HTTPSServer ${SOURCES})

@@ -158,26 +158,33 @@ int main()
 		//go to accept when exit is typed
 		if (strcmp(buffer, "exit") == 0) break;
 
-		int bytecount = send(clientSocket, buffer, 200, 0);
+		// we replace "int bytecount = send(clientSocket, buffer, 200, 0);" to wrap it in OpenSSL "SSL_write(ssl, buffer, strlen(buffer))"
+		int bytecount = SSL_write(ssl, buffer, strlen(buffer));
 
 		if (bytecount > 0) {
 			cout << "message sent: " << buffer << endl;
+			
 
 		}
 		else {
-			WSACleanup();
+			ERR_print_errors_fp(stderr);
+			break;
+			//WSACleanup();
 		}
 
  		//chat to the client, recieve data and clear buffer to recieve new message synchoronusly and send & recieve mulitple times
 		ZeroMemory(buffer, 200);
 
-		int bytecount2 = recv(acceptSocket, buffer, 200, 0);
+		// int bytecount2 = recv(acceptSocket, buffer, 200, 0);
+		int bytecount2 = SSL_read(ssl, buffer, sizeof(buffer));
 
 		if (bytecount2 > 0) {
 			cout << "message recieved! you said: " << buffer << endl;
 		}
 		else {
-			WSACleanup();
+			ERR_print_errors_fp(stderr);
+			break;
+			//WSACleanup();
 		}
 	}
 
