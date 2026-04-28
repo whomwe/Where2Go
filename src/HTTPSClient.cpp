@@ -1,6 +1,5 @@
 //CLIENT SOCKET CREATED IN A NEW FILE
 #include "HTTPSServer.h"
-#include "HTTPSServer.cpp"
 
 using namespace std;
 
