@@ -1,4 +1,19 @@
 # HTTPSServer
-This repo is a from-scratch HTTPS server written in C++, on top of which I am building a holiday recommendation website called Where2Go.
+# Where2Go
 
-*Built for learning purposes and portfolio demonstration. Not intended for production use CURRENTLY.*
+A holiday discovery platform built on a custom HTTPS server written from scratch in C++.
+
+## The Server
+- Built using Winsock2 and OpenSSL
+- Multithreaded request handling
+- SSL/TLS termination
+- No high-level frameworks — raw socket implementation
+
+## The Application
+- Where2Go: holiday destination discovery
+
+## Why I Built This
+To deepen my understanding of low-level networking, TLS handshake mechanics, and full-stack architecture from the ground up.
+
+## Status
+Active development — server foundation complete, application layer in progress.
