@@ -27,6 +27,7 @@ int main()
 	//step 1initialise WSA by invoking the DLL's 
 	SOCKET serverSocket, acceptSocket;
 	int port = 27015;
+	Sleep(1500); //gives server 1.5 seconds to start
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD(2, 2);
 	int wsaerr = WSAStartup(wVersionRequested, &wsaData);
@@ -39,7 +40,7 @@ int main()
 		cout << "status: " << wsaData.szSystemStatus << endl;
 	}
 
-	//step 2a - create the server socket AND CLIENT SOCKET 
+	//step 2a - create the server socket
 	//serverSocket = INVALID_SOCKET;
 	serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (serverSocket == INVALID_SOCKET) {
